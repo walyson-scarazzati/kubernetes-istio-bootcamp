@@ -1,0 +1,27 @@
+auth:
+  strategy: token
+
+deployment:
+  ingress:
+    enabled: true
+    class_name: nginx
+  resources:
+    limits:
+      cpu: "0.5"
+      memory: 512Mi
+
+external_services:
+  prometheus:
+    url: http://kube-prometheus-stack-prometheus.istio-system:9090/prometheus
+    health_check_url: http://kube-prometheus-stack-prometheus.istio-system:9090/prometheus/-/healthy
+  tracing:
+    enabled: true
+    in_cluster_url: http://jaeger-simple-query.istio-system:16686/jaeger
+    # TODO : change this to nginx ingress controller IP
+    url: http://34.128.89.194//jaeger
+    use_grpc: false
+  grafana:
+    enabled: true
+    in_cluster_url: http://kube-prometheus-stack-grafana.istio-system/grafana
+    # TODO : change this to nginx ingress controller IP
+    url: http://34.128.89.194//grafana

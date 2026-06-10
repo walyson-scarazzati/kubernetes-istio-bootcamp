@@ -1,0 +1,21 @@
+controller:
+  resources:
+    limits:
+      cpu: "0.3"
+      memory: 512Mi
+
+  autoscaling:
+    enabled: false
+
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: "prometheus"
+  # https://github.com/kubernetes/ingress-nginx/blob/main/docs/user-guide/monitoring.md
+  podAnnotations:
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "10254"
+    prometheus.io/path: "/metrics"
+    

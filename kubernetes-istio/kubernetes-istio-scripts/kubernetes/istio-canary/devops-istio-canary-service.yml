@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops
+  name: devops-blue-clusterip
+  labels:
+    app: istio-canary-blue
+spec:
+  selector:
+    app: istio-canary-blue
+  ports:
+  - port: 8111
+    name: http
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops
+  name: devops-yellow-clusterip
+  labels:
+    app: istio-canary-yellow
+spec:
+  selector:
+    app: istio-canary-yellow
+  ports:
+  - port: 8112
+    name: http
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops
+  name: devops-white-clusterip
+  labels:
+    app: istio-canary-white
+spec:
+  selector:
+    app: istio-canary-white
+  ports:
+  - port: 8113
+    name: http
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: devops
+  name: ingress-istio-canary-nginx-blue
+  labels:
+    app.kubernetes.io/name: ingress-istio-canary-nginx-blue
+  # uncomment annotations to make nginx works with istio
+  annotations:
+    nginx.ingress.kubernetes.io/service-upstream: "true"
+    nginx.ingress.kubernetes.io/upstream-vhost: devops-blue-clusterip.devops.svc.cluster.local
+spec:
+  ingressClassName: nginx
+  rules:
+  - http:
+      paths:
+      - path: /devops/blue
+        pathType: Prefix
+        backend:
+          service:
+            name: devops-blue-clusterip
+            port:
+              number: 8111

@@ -1,0 +1,5 @@
+# Use your own token after register to kubecost.com
+kubecostToken: register-and-use-kubecost-token
+
+ingress:
+  enabled: false

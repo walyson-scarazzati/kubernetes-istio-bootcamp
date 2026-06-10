@@ -1,0 +1,28 @@
+apiVersion: database.gcp.crossplane.io/v1beta1
+kind: CloudSQLInstance
+metadata:
+  namespace: devops
+  name: gcp-crossplane-cloudsql
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    databaseVersion: POSTGRES_14
+    instanceType: CLOUD_SQL_INSTANCE
+    region: asia-southeast2
+    gceZone: asia-southeast2-b
+    settings:
+      activationPolicy: ALWAYS
+      availabilityType: ZONAL
+      dataDiskSizeGb: 10
+      dataDiskType: PD_HDD
+      locationPreference:
+        zone: asia-southeast2-b
+      pricingPlan: PER_USE
+      replicationType: SYNCHRONOUS
+      storageAutoResize: false
+      tier: db-f1-micro
+  providerConfigRef:
+    name: provider-gcp
+  writeConnectionSecretToRef:
+    name: gcp-cloudsql-connection
+    namespace: devops

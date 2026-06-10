@@ -1,0 +1,43 @@
+kind: DestinationRule
+apiVersion: networking.istio.io/v1beta1
+metadata:
+  name: istio-conditional-abort
+  namespace: devops
+spec:
+  host: devops-white-clusterip.devops.svc.cluster.local
+  subsets:
+    - name: old
+      labels:
+        version: 1.0.0
+    - name: new
+      labels:
+        version: 1.0.1
+
+---
+
+kind: VirtualService
+apiVersion: networking.istio.io/v1beta1
+metadata:
+  name: istio-conditional-abort
+  namespace: devops
+spec:
+  hosts:
+    - devops-white-clusterip.devops.svc.cluster.local
+  http:
+    - route:
+        - destination:
+            host: devops-white-clusterip.devops.svc.cluster.local
+            subset: old
+          weight: 50
+        - destination:
+            host: devops-white-clusterip.devops.svc.cluster.local
+            subset: new
+          weight: 50
+      match:
+        - sourceLabels:
+            app: istio-canary-yellow
+      fault:
+        abort:
+          httpStatus: 429
+          percentage:
+            value: 100

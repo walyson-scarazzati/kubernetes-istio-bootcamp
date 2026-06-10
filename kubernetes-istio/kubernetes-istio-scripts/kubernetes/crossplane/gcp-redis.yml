@@ -1,0 +1,18 @@
+apiVersion: cache.gcp.crossplane.io/v1beta1
+kind: CloudMemorystoreInstance
+metadata:
+  namespace: devops
+  name: gcp-crossplane-redis
+spec:
+  deletionPolicy: Delete
+  forProvider:
+    authEnabled: false
+    connectMode: DIRECT_PEERING
+    memorySizeGb: 1
+    region: asia-southeast2
+    tier: BASIC
+  providerConfigRef:
+    name: provider-gcp
+  writeConnectionSecretToRef:
+    name: gcp-redis-connection
+    namespace: devops

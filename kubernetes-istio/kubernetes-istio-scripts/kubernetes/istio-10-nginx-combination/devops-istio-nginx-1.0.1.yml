@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: devops
+  name: istio-routing-deployment-blue-additional
+spec:
+  selector:
+    matchLabels:
+      app: istio-routing-blue
+  template:
+    metadata:
+      labels:
+        app: istio-routing-blue
+        version: 1.0.1
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8111"
+        prometheus.io/path: /devops/blue/actuator/prometheus
+        sidecar.opentelemetry.io/inject: "otel-sidecar"
+        instrumentation.opentelemetry.io/inject-java: "true"
+    spec:
+      containers:
+      - name: devops-blue
+        image: timpamungkas/devops-blue:1.0.1
+        resources:
+          requests:
+            cpu: "0.02"
+            memory: 32Mi
+          limits:
+            cpu: "0.3"
+            memory: 384Mi
+        ports:
+        - name:  http
+          containerPort: 8111
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /devops/blue/actuator/health/readiness
+            port: 8111
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /devops/blue/actuator/health/liveness
+            port: 8111
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 5
+  replicas: 1
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops
+  name: devops-blue-clusterip
+  labels:
+    app: istio-routing-blue
+spec:
+  selector:
+    app: istio-routing-blue
+  ports:
+  - port: 8111
+    name: http

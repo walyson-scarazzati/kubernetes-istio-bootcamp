@@ -1,0 +1,27 @@
+replicaCount: 2
+
+auth:
+  username: admin
+  existingPasswordSecret: devops-rabbitmq-secret
+  existingErlangSecret: devops-rabbitmq-secret  
+
+resources:
+  requests:
+    cpu: "0.5"
+    memory: 200Mi
+  limits:
+    cpu: "1"
+    memory: 1Gi
+
+ingress:
+  enabled: true
+  ingressClassName: nginx
+  hostname: rabbitmq.local
+  path: /rabbitmq
+
+extraConfiguration: |-
+  management.path_prefix = /rabbitmq
+
+persistence:
+  size: 1Gi
+  

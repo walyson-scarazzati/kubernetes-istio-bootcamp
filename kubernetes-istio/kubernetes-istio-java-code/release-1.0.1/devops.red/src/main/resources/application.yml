@@ -1,0 +1,53 @@
+logging:
+  pattern:
+    console: "[Devops-Red] %clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(---){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+        
+spring:
+  main:
+    banner-mode: OFF
+  application:
+    name: devops-red
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1MB
+      max-request-size: 1MB
+  # For opentracing
+  sleuth:
+    propagation:
+      type:
+      - B3
+  zipkin:
+    base-url: ${SPRING_ZIPKIN_BASE_URL}
+    
+server:
+  port: 8114
+  servlet:
+    context-path: /devops/red
+
+management:
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
+          - metrics
+          - health
+          - shutdown
+          
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter: alpha

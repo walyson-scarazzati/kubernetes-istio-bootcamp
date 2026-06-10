@@ -1,0 +1,59 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: devops
+  name: ingress-combination-nginx-blue
+  labels:
+    app.kubernetes.io/name: ingress-combination-nginx-blue
+  annotations:
+    # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations
+    nginx.ingress.kubernetes.io/limit-rpm: "30"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "1"
+    nginx.ingress.kubernetes.io/hsts: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - secretName: api-devops-local-cert
+      hosts:
+        - api.devops.local
+  rules:
+  - host: api.devops.local
+    http:
+      paths:
+      - path: /devops/blue
+        pathType: Prefix
+        backend:
+          service:
+            name: devops-blue-clusterip
+            port:
+              number: 8111
+
+---
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: devops
+  name: ingress-combination-nginx-yellow
+  labels:
+    app.kubernetes.io/name: ingress-combination-nginx-yellow
+  annotations:
+    # https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations
+    nginx.ingress.kubernetes.io/temporal-redirect: https://www.google.com
+spec:
+  ingressClassName: nginx
+  tls:
+    - secretName: api-devops-local-cert
+      hosts:
+        - api.devops.local
+  rules:
+  - host: api.devops.local
+    http:
+      paths:
+      - path: /devops/yellow
+        pathType: Prefix
+        backend:
+          service:
+            name: devops-yellow-clusterip
+            port:
+              number: 8112

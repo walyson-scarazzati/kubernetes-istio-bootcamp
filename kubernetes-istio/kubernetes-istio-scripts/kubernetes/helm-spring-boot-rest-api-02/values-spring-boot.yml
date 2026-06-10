@@ -1,0 +1,48 @@
+image:
+  repository: timpamungkas/devops-yellow
+  tag: 1.0.0
+
+applicationPort: 8112
+
+actuatorPort: 8112
+
+prometheusPath: /devops/yellow/actuator/prometheus
+
+health:
+  liveness:
+    port: 8112
+    path: /devops/yellow/actuator/health/liveness
+  readiness:
+    port: 8112
+    path: /devops/yellow/actuator/health/readiness
+
+extraVolumeMounts: |
+  - name: upload-image-empty-dir
+    mountPath: /upload/image
+  - name: upload-doc-empty-dir
+    mountPath: /upload/doc
+
+extraVolumes: |
+  - name: upload-image-empty-dir
+    emptyDir: {}
+  - name: upload-doc-empty-dir
+    emptyDir: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+autoscaling:
+  enabled: "false"
+
+ingress:
+  enabled: "true"
+  ingressClassName: nginx
+  annotations: 
+    nginx.ingress.kubernetes.io/limit-rpm: "30"
+    nginx.ingress.kubernetes.io/limit-burst-multiplier: "1"
+  hosts:
+  - host: yellow.devops.local
+    paths:
+    - path: /
+      pathType: Prefix

@@ -1,0 +1,13 @@
+controller:
+  resources:
+    limits:
+      cpu: 500m
+      memory: 1Gi
+
+  # monitoring
+  metrics:
+    enabled: true
+    serviceMonitor:
+      enabled: true
+      additionalLabels:
+        release: prometheus

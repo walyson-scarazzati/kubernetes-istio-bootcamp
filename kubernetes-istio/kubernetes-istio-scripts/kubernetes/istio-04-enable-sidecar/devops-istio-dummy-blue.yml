@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: devops
+  name: istio-basic-deployment-dummy-blue
+  labels:
+    app.kubernetes.io/name: istio-basic-dummy-blue
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: istio-basic-dummy-blue
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: istio-basic-dummy-blue
+        app.kubernetes.io/version: 1.0.0
+    spec:
+      containers:
+      - name: devops-blue
+        image: timpamungkas/devops-blue:1.0.0
+        resources:
+          limits:
+            cpu: "0.5"
+            memory: 512Mi
+        ports:
+        - name:  http
+          containerPort: 8111
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /devops/blue/actuator/health/readiness
+            port: 8111
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /devops/blue/actuator/health/liveness
+            port: 8111
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 5
+        env:
+          - name: DEVOPS_YELLOW_URL
+            # to local k8s cluster  
+            value: http://devops-yellow-clusterip.devops:8112/devops/yellow
+          - name: DEVOPS_WHITE_URL
+            # to local k8s cluster  
+            value: http://devops-white-clusterip.devops:8113/devops/white
+  replicas: 1

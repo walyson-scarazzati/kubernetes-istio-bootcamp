@@ -1,0 +1,13 @@
+spring-boot-rest-api:
+  autoscaling:
+    enabled: "false"
+  ingress:
+    annotations: 
+      nginx.ingress.kubernetes.io/limit-rpm: "10"
+      nginx.ingress.kubernetes.io/limit-burst-multiplier: "1"
+
+redis:
+  replica:
+    replicaCount: 1
+    autoscaling:
+      enabled: false

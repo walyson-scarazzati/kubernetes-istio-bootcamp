@@ -1,0 +1,48 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name:  devops
+  labels:
+    istio-injection: enabled
+
+---
+
+apiVersion: opentelemetry.io/v1alpha1
+kind: OpenTelemetryCollector
+metadata:
+  name: otel-sidecar
+  namespace: devops
+spec:
+  mode: sidecar
+  config: |
+    receivers:
+      jaeger:
+        protocols:
+          thrift_compact:
+    processors:
+
+    exporters:
+      logging:
+
+    service:
+      pipelines:
+        traces:
+          receivers: [jaeger]
+          processors: []
+          exporters: [logging]
+
+---
+
+apiVersion: opentelemetry.io/v1alpha1
+kind: Instrumentation
+metadata:
+  name: otel-instrumentation
+  namespace: devops
+spec:
+  exporter:
+    endpoint: http://jaeger-simple-collector.istio-system:4317
+  propagators:
+    - b3
+  sampler:
+    type: parentbased_traceidratio
+    argument: "1"

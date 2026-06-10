@@ -1,0 +1,39 @@
+spring-boot-rest-api:
+  image:
+    repository: timpamungkas/devops-blue
+    tag: 1.0.0
+    
+  autoscaling:
+    enabled: false
+    targetCPUUtilizationPercentage: ""
+    targetMemoryUtilizationPercentage: ""
+
+  ingress:
+    annotations: 
+      nginx.ingress.kubernetes.io/limit-rpm: "10"
+      nginx.ingress.kubernetes.io/limit-burst-multiplier: "1"
+    hosts:
+    - host: api.devops.local
+      paths:
+      - path: /devops/blue
+        pathType: Prefix
+        
+  extraEnv: |
+    - name: DEVOPS_BLUE_HTML_BG_COLOR
+      value: "#dcecf2"
+    - name: DEVOPS_BLUE_HTML_TEXT_COLOR
+      value: "#000000"
+    - name: HARDCODED_ENVIRONMENT_VARIABLE
+      value: This is from values-dev.yml
+    - name: DEVOPS_BLUE_HTML_TEXT_ONE
+      value: This is from values-dev.yml
+    - name: DEVOPS_BLUE_HTML_TEXT_TWO
+      value: This is from values-dev.yml
+    - name: DEVOPS_BLUE_HTML_TEXT_THREE
+      value: This is from values-dev.yml
+    - name: DEVOPS_BLUE_HTML_TEXT_FOUR
+      value: This is from values-dev.yml
+    - name: DEVOPS_BLUE_HTML_TEXT_FIVE
+      value: This is from values-dev.yml
+    - name: DEVOPS_BLUE_HTML_TEXT_SIX
+      value: This is from values-dev.yml

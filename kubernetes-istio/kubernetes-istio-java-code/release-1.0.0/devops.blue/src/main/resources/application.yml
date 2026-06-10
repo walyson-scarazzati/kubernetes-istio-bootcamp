@@ -1,0 +1,72 @@
+logging:
+  pattern:
+    console: "[Devops-Blue] %clr(%d{HH:mm:ss.SSS}){faint} %clr(${LOG_LEVEL_PATTERN:%5p}) %clr(---){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:%wEx}"
+        
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/postgres
+    username: postgres
+    password: postgres
+  main:
+    banner-mode: OFF
+  application:
+    name: devops-blue
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 1MB
+      max-request-size: 1MB
+    
+server:
+  port: 8111
+  servlet:
+    context-path: /devops/blue
+
+management:
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true
+  endpoint:
+    health:
+      probes:
+        enabled: true
+    shutdown:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include:
+          - prometheus
+          - metrics
+          - health
+          - shutdown
+      
+springdoc:
+  show-actuator: true
+  swagger-ui:
+    operationsSorter: alpha
+    tagsSorter: alpha
+    
+devops:
+  blue:
+    html:
+      hardcoded: ${HARDCODED_ENVIRONMENT_VARIABLE:xxx}
+      color:
+        background: ${DEVOPS_BLUE_HTML_BG_COLOR:#ffffff}
+        text: ${DEVOPS_BLUE_HTML_TEXT_COLOR:#000000}
+      text:
+        one: ${DEVOPS_BLUE_HTML_TEXT_ONE:xxx}
+        two: ${DEVOPS_BLUE_HTML_TEXT_TWO:xxx}
+        three: ${DEVOPS_BLUE_HTML_TEXT_THREE:xxx}
+        four: ${DEVOPS_BLUE_HTML_TEXT_FOUR:xxx}
+        five: ${DEVOPS_BLUE_HTML_TEXT_FIVE:xxx}
+        six: ${DEVOPS_BLUE_HTML_TEXT_SIX:xxx}
+      sealed-secret:
+        config-file: ${DEVOPS_BLUE_CONFIG_FILE:xxx}
+  service:
+    yellow:
+      root-url: ${DEVOPS_YELLOW_URL:http://localhost:8112/devops/yellow}
+    white:
+      root-url: ${DEVOPS_WHITE_URL:http://localhost:8113/devops/white}

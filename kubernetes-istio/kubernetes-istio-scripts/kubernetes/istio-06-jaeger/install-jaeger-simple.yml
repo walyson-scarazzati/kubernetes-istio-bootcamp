@@ -1,0 +1,59 @@
+apiVersion: jaegertracing.io/v1
+kind: Jaeger
+metadata:
+  name: jaeger-simple
+  namespace: istio-system
+spec:
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+  strategy: allInOne
+  allInOne:
+    options:
+      log-level: info
+      query:
+        base-path: /jaeger
+      # collector:
+      #   zipkin:
+      #     host-port: 9411
+  storage:
+    type: badger
+    
+---
+
+# The istio default will sending trace into zipkin.istio-system:9411
+# So we need to create such service
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    name: zipkin
+  name: zipkin
+  namespace: istio-system
+spec:
+  ports:
+    - port: 9411
+      targetPort: 9411
+      name: http-zipkin
+    - port: 14250
+      targetPort: 14250
+      name: grpc-http
+    - port: 14267
+      targetPort: 14267
+      name: http-c-tchan-trft
+    - port: 14268
+      targetPort: 14268
+      name: http-c-binary-trft
+    - port: 4317
+      targetPort: 4317
+      name: otlp-grpc
+    - port: 4318
+      targetPort: 4318
+      name: otlp-http
+  selector:
+    app: jaeger
+    app.kubernetes.io/instance: jaeger-simple
+    app.kubernetes.io/name: jaeger-simple
+
+

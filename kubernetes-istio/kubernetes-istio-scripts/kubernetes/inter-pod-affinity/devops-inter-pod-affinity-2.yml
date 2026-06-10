@@ -1,0 +1,72 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name:  devops
+  labels:
+    istio-injection: enabled
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: devops
+  name: application-yellow
+spec:
+  selector:
+    matchLabels:
+      app: application-yellow
+  template:
+    metadata:
+      labels:
+        app: application-yellow
+        version: 1.0.0
+    spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 100
+              podAffinityTerm:
+                topologyKey: cloud.google.com/gke-nodepool
+                labelSelector:
+                  matchExpressions:
+                  - key: app
+                    operator: In
+                    values:
+                    - application-yellow
+      containers:
+      - name: devops-yellow
+        image: timpamungkas/devops-yellow:1.0.0
+        resources:
+          requests:
+            cpu: "0.02"
+            memory: 32Mi
+          limits:
+            cpu: "0.3"
+            memory: 384Mi
+        ports:
+        - name:  http
+          containerPort: 8111
+          protocol: TCP
+        readinessProbe:
+          httpGet:
+            path: /devops/yellow/actuator/health/readiness
+            port: 8111
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 5
+        livenessProbe:
+          httpGet:
+            path: /devops/yellow/actuator/health/liveness
+            port: 8111
+            scheme: HTTP
+          initialDelaySeconds: 60
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 5
+        env:
+          - name: DEVOPS_WHITE_URL
+            value: http://devops-white-clusterip.devops:8113/devops/white
+  replicas: 8

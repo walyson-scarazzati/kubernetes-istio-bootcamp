@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name:  rabbitmq
+
+---
+
+kind: Secret 
+apiVersion: v1 
+metadata:
+  namespace: rabbitmq
+  name: devops-rabbitmq-secret
+immutable: true
+data:
+  rabbitmq-erlang-cookie: ZHVtbXktZXJsYW5nLWNvb2tpZQ==
+  rabbitmq-password: cGFzc3dvcmQ=

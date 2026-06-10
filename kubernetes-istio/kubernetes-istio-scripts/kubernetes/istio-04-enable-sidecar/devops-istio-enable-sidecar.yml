@@ -1,0 +1,6 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name:  devops
+  labels:
+    istio-injection: enabled    # just need this label to inject sidecar proxy # just need this label to inject sidecar proxy
