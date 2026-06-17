@@ -51,6 +51,14 @@ spec:
         - name:  http
           containerPort: 8111
           protocol: TCP
+        startupProbe:
+          httpGet:
+            path: /devops/blue/actuator/health/liveness
+            port: 8111
+            scheme: HTTP
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 30
         readinessProbe:
           httpGet:
             path: /devops/blue/actuator/health/readiness

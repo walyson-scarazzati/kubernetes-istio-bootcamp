@@ -9,41 +9,30 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: devops
-  name: devops-service-blue-deployment
+  name: devops-gateway-api-blue-deployment
   labels:
-    app.kubernetes.io/name: devops-service-blue
+    app.kubernetes.io/name: devops-gateway-api-blue
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: devops-service-blue
+      app.kubernetes.io/name: devops-gateway-api-blue
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: devops-service-blue
-        app.kubernetes.io/version: 1.0.0
+        app.kubernetes.io/name: devops-gateway-api-blue
+        app.kubernetes.io/version: 2.0.0
     spec:
       containers:
       - name: devops-blue
-        image: timpamungkas/devops-blue:1.0.0
+        image: timpamungkas/devops-blue:2.0.0
         resources:
-          requests:
-            cpu: "100m"
-            memory: 256Mi
           limits:
-            cpu: "0.5"
-            memory: 500M
+            cpu: "0.3"
+            memory: 200M
         ports:
         - name:  http
           containerPort: 8111
           protocol: TCP
-        startupProbe:
-          httpGet:
-            path: /devops/blue/actuator/health/liveness
-            port: 8111
-            scheme: HTTP
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 30
         readinessProbe:
           httpGet:
             path: /devops/blue/actuator/health/readiness
@@ -52,7 +41,7 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 5
-          failureThreshold: 4
+          failureThreshold: 5
         livenessProbe:
           httpGet:
             path: /devops/blue/actuator/health/liveness
@@ -61,8 +50,8 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 5
-          failureThreshold: 4
-  replicas: 2
+          failureThreshold: 5
+  replicas: 1
 
 ---
 
@@ -70,41 +59,30 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   namespace: devops
-  name: devops-service-yellow-deployment
+  name: devops-gateway-api-yellow-deployment
   labels:
-    app.kubernetes.io/name: devops-service-yellow
+    app.kubernetes.io/name: devops-gateway-api-yellow
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: devops-service-yellow
+      app.kubernetes.io/name: devops-gateway-api-yellow
   template:
     metadata:
       labels:
-        app.kubernetes.io/name: devops-service-yellow
-        app.kubernetes.io/version: 1.0.0
+        app.kubernetes.io/name: devops-gateway-api-yellow
+        app.kubernetes.io/version: 2.0.0
     spec:
       containers:
       - name: devops-yellow
-        image: timpamungkas/devops-yellow:1.0.0
+        image: timpamungkas/devops-yellow:2.0.0
         resources:
-          requests:
-            cpu: "100m"
-            memory: 256Mi
           limits:
-            cpu: "0.5"
-            memory: 500M
+            cpu: "0.3"
+            memory: 200M
         ports:
         - name:  http
           containerPort: 8112
           protocol: TCP
-        startupProbe:
-          httpGet:
-            path: /devops/yellow/actuator/health/liveness
-            port: 8112
-            scheme: HTTP
-          periodSeconds: 10
-          timeoutSeconds: 5
-          failureThreshold: 30
         readinessProbe:
           httpGet:
             path: /devops/yellow/actuator/health/readiness
@@ -113,7 +91,7 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 5
-          failureThreshold: 4
+          failureThreshold: 5
         livenessProbe:
           httpGet:
             path: /devops/yellow/actuator/health/liveness
@@ -122,5 +100,37 @@ spec:
           initialDelaySeconds: 60
           periodSeconds: 30
           timeoutSeconds: 5
-          failureThreshold: 4
-  replicas: 2
+          failureThreshold: 5
+  replicas: 1
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops
+  name: devops-blue-clusterip
+  labels:
+    app.kubernetes.io/name: devops-gateway-api-blue
+spec:
+  selector:
+    app.kubernetes.io/name: devops-gateway-api-blue
+  ports:
+  - port: 8111
+    name: http      # optional, to be used for accessing through kubectl proxy
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: devops
+  name: devops-yellow-clusterip
+  labels:
+    app.kubernetes.io/name: devops-gateway-api-yellow
+spec:
+  selector:
+    app.kubernetes.io/name: devops-gateway-api-yellow
+  ports:
+  - port: 8112
+    name: http      # optional, to be used for accessing through kubectl proxy

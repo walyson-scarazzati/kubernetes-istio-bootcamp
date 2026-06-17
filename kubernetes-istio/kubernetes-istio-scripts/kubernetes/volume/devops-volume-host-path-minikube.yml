@@ -66,6 +66,9 @@ spec:
       - name: devops-blue
         image: timpamungkas/devops-blue:1.0.0
         resources:
+          requests:
+            cpu: "250m"
+            memory: 300M
           limits:
             cpu: "0.5"
             memory: 500M
@@ -100,6 +103,9 @@ spec:
         image: alpine
         command: ['sh', '-c', 'echo alpine-linux-container is running ; sleep 3600 ']
         resources:
+          requests:
+            cpu: "100m"
+            memory: 100M
           limits:
             cpu: "0.5"
             memory: 200M
