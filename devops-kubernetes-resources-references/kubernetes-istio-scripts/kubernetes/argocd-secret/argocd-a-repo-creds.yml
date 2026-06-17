@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: my-argocd-repo-creds
+  namespace: argocd
+  labels:
+    argocd.argoproj.io/secret-type: repo-creds
+stringData:
+  type: git
+  # Change url, username, password with your own
+  url: https://github.com/timpamungkas/devops-app-deployment
+  username: timpamungkas
+  password: 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

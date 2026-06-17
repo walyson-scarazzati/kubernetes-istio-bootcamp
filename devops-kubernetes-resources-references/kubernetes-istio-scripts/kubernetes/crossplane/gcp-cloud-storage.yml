@@ -1,0 +1,16 @@
+apiVersion: storage.gcp.crossplane.io/v1alpha3
+kind: Bucket
+metadata:
+  namespace: devops
+  name: gcp-crossplane-cloud-storage
+spec:
+  deletionPolicy: Delete
+  location: asia-southeast2
+  providerConfigRef:
+    name: provider-gcp
+  requesterPays: false
+  storageClass: STANDARD
+  versioningEnabled: false
+  writeConnectionSecretToRef:
+    name: gcp-cloud-storage-connection
+    namespace: devops

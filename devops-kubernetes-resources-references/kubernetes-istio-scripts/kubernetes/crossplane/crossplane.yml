@@ -1,0 +1,3 @@
+configuration:
+  packages: 
+  - registry.upbound.io/xp/getting-started-with-gcp:latest
